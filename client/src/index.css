@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./fonts/Montserrat-ExtraBold.ttf') format('truetype');
+  font-weight: 800; 
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-text: #3E2723;
+  --color-background: #FAF5F0;
+  --color-primary: #8D7B68;
+  --color-secondary: #E6DED6;
+  --color-accent: #C8937E;
+
+  --font-velvet: 'Montserrat', sans-serif;
+}
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #FAF5F0; 
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #E6DED6; 
+  border-radius: 10px; 
+  border: 2px solid #FAF5F0; 
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8D7B68; 
+}
