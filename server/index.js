@@ -4,13 +4,17 @@ import userRouter from './routes/userRouter.js';
 import productRouter from './routes/productRouter.js';
 import reviewRouter from './routes/reviewRouter.js';
 import jwt from 'jsonwebtoken';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
+dotenv.config();
 
-let mongoURI = "mongodb+srv://admin:1234@cluster0.hlrrzfe.mongodb.net/velvet_co?appName=Cluster0"
+const mongoURI = process.env.MONGO_URL;
 mongoose.connect(mongoURI).then(() => console.log("Connected to Mongodb Cluster"))
 
-let app = express()
+const app = express()
 
+app.use(cors());
 app.use(express.json())
 app.use(
     (req,res,next)=>{
@@ -20,7 +24,7 @@ app.use(
             console.log(token)
             
             
-            jwt.verify(token, "secretkeyvelvet_co",
+            jwt.verify(token, process.env.JWT_SECRET,
                 (error,content)=>{
                     console.log(content)
 
@@ -54,9 +58,9 @@ app.use(
 
 
 
-app.use("/users", userRouter)
-app.use("/products", productRouter)
-app.use("/reviews", reviewRouter);
+app.use("/api/users", userRouter)
+app.use("/api/products", productRouter)
+app.use("/api/reviews", reviewRouter);
 app.listen(3000 , 
     () =>{
         console.log("server is running")

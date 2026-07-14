@@ -1,6 +1,8 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 
 
@@ -46,13 +48,14 @@ export function loginUser(req, res) {
                     image: user.image,
                 };
 
-                const token = jwt.sign(playload, "secretkeyvelvet_co",{
+                const token = jwt.sign(playload, process.env.JWT_SECRET,{
                     expiresIn: "150h"
                 })
                 
                 if (isPasswordCorrect) {
                     res.json({ message: "Login successful",
-                        token: token
+                        token: token,
+                        role: user.role,
                      });
                 } else {
                     res.json(401).json({ message: "Invalid password" });

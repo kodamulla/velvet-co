@@ -5,10 +5,12 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
 import RegisterPage from './pages/RegisterPage';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <BrowserRouter>
+    <Toaster position="top-right"/>
       <div className="w-full min-h-screen bg-background font-sans text-text">
         <Routes>
           
