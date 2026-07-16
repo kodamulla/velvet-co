@@ -2,6 +2,7 @@
 import { Routes, Route, Link } from "react-router-dom";
 import AdminProductsPage from "./admin/AdminProductsPage";
 import AdminAddProductPage from "./admin/AdminAddProductPage";
+import AdminUpdateProductPage from "./admin/AdminUpdateProductPage";
 import { FaClipboardList, FaBox, FaUsers, FaStar } from "react-icons/fa";
 
 export default function AdminPage() {
@@ -46,6 +47,8 @@ export default function AdminPage() {
                     <Route path="/" element={<h1 className="text-3xl font-bold">Orders </h1>} />
                     <Route path="/products" element={<AdminProductsPage />} />
                     <Route path="/add-product" element={<AdminAddProductPage />} />
+                    <Route path="/update-product" element={<AdminUpdateProductPage />} />
+                    <Route path="/users" element={<h1 className="text-3xl font-bold">Users</h1>} />
                     <Route path="/reviews" element={<h1 className="text-3xl font-bold">Reviews</h1>} />
                 </Routes>
                 

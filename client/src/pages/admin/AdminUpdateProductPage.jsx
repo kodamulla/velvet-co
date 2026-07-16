@@ -3,27 +3,33 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; 
 import toast from "react-hot-toast"; 
 import { uploadFile } from "../../utils/mediaupload";
+import { useLocation } from "react-router-dom";
 
-export default function AdminAddProductsPage() {
-    const [productID, setProductID] = useState("");
-    const [name, setName] = useState("");
-    const [altNames, setAltNames] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
-    const [labelledPrice, setLabelledPrice] = useState("");
+export default function AdminUpdateProductsPage() {
+    const location = useLocation();
+    const [productID, setProductID] = useState(location.state.productID);
+    const [name, setName] = useState(location.state.name);
+    const [altNames, setAltNames] = useState(location.state.altNames?.join(", ") );
+    const [description, setDescription] = useState(location.state.description);
+    const [price, setPrice] = useState(location.state.price);
+    const [labelledPrice, setLabelledPrice] = useState(location.state.labelledPrice);
     const [files, setFiles] = useState([]);
-    const [category, setCategory] = useState("");
-    const [model, setModel] = useState("");
-    const [brand, setBrand] = useState("");
-    const [stock, setStock] = useState(0);
-    const [isAvailable, setIsAvailable] = useState(false);
+    const [category, setCategory] = useState(location.state.category);
+    const [model, setModel] = useState(location.state.model);
+    const [brand, setBrand] = useState(location.state.brand);
+    const [stock, setStock] = useState(location.state.stock);
+    const [isAvailable, setIsAvailable] = useState(location.state.isAvailable);
     
     const navigate = useNavigate();
 
-    async function addproduct() {
+     if(!location.state){
+        window.location.href = "/admin/products";
+    }
+
+    async function updateProduct() {
         const token = localStorage.getItem("token");
         if (token === null) {
-            toast.error("You must be logged in to add a product.");
+            toast.error("You must be logged in to update a product.");
             navigate("/login");
             return;
         }
@@ -44,11 +50,6 @@ export default function AdminAddProductsPage() {
             return;
         });
 
-       
-
-
-
-
         if (productID === "" || name === "" || altNames === "" || description === "" || price === "" || labelledPrice === "" || images === "" || category === "" || model === "" || brand === "") {
             toast.error("Please fill in all required fields.");
             return;
@@ -56,7 +57,8 @@ export default function AdminAddProductsPage() {
         try {
             const altnamesInArray = altNames.split(",").map(name => name.trim());
             
-            await axios.post(import.meta.env.VITE_BACKEND_URL + "/products/", {
+            
+            await axios.put(import.meta.env.VITE_BACKEND_URL + "/products/" + productID, {
                 productID: productID,
                 name: name,
                 altNames: altnamesInArray,
@@ -74,12 +76,12 @@ export default function AdminAddProductsPage() {
                     Authorization: "Bearer " + token
                 }
             });
-            toast.success("Product added successfully!");
+            toast.success("Product updated successfully!");
             navigate("/admin/products");
             
         } catch (error) {
-            console.error("Error adding product:", error);
-            toast.error("Failed to add product. Please try again.");
+            console.error("Error updating product:", error);
+            toast.error("Failed to update product. Please try again.");
         }
     }
 
@@ -88,7 +90,8 @@ export default function AdminAddProductsPage() {
             
             <div className="w-full max-w-6xl bg-accent/10 backdrop-blur-2xl rounded-[3rem] p-12 border border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
                 
-                <h1 className="text-3xl font-extrabold text-text mb-10 text-center tracking-tight">Add New Product</h1>
+                {/* Heading එක Update Product ලෙස වෙනස් කළා */}
+                <h1 className="text-3xl font-extrabold text-text mb-10 text-center tracking-tight">Update Product</h1>
                 
                 <div className="grid grid-cols-2 gap-16">
                     
@@ -123,7 +126,7 @@ export default function AdminAddProductsPage() {
 
                     </div>
 
-                   
+                    
                     <div className="flex flex-col gap-6">
                         
                         <div className="grid grid-cols-2 gap-6">
@@ -190,12 +193,11 @@ export default function AdminAddProductsPage() {
                         Cancel
                     </Link>
                     
-                    {/* onClick={addproduct}  */}
                     <button 
-                        onClick={addproduct}
+                        onClick={updateProduct}
                         className="w-1/2 py-4 bg-text text-background rounded-2xl hover:bg-[#1a100e] hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-extrabold tracking-[0.25em] text-sm uppercase"
                     >
-                        Add Product
+                        Update Product
                     </button>
                 </div>
 

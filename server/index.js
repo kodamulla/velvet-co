@@ -34,6 +34,8 @@ app.use(
                             message: "invalid token"
                         })
 
+                        next();
+
                 
                     }else{
                         
