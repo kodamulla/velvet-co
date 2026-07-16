@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { addToCart } from "../utils/cart.js";
 
 export default function ProductCard({ product }) {
     return (
