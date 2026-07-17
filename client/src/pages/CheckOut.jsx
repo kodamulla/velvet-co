@@ -46,7 +46,7 @@ export default function CheckoutPage() {
             quantity: item.quantity,
         }));
 
-        axios.post(import.meta.env.VITE_BACKEND_URL + "/api/orders", {
+        axios.post(import.meta.env.VITE_BACKEND_URL + "/orders", {
             name: name,
             address: address,
             phone: phone,

@@ -9,6 +9,9 @@ export default function ProductPage() {
     const [loaded, setLoaded] = useState(false);
     const [query, setQuery] = useState("");
 
+    // Categories ලැයිස්තුව
+    const categories = ["Skincare", "Makeup", "Haircare", "Fragrances", "Bath & Body"];
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -17,42 +20,55 @@ export default function ProductPage() {
                 setLoaded(true);
             } catch (error) {
                 console.error("Error fetching products:", error);
-                setLoaded(true); 
+                setLoaded(true);
             }
         };
         fetchProducts();
-
-        
-    }, []); 
+    }, []);
 
     return (
         <div className="w-full min-h-screen bg-[#FAF4F0] p-6 md:p-12">
             {!loaded ? (
                 <Loader />
             ) : (
-                <div className="max-w-7xl mx-auto mt-10">
-                    {/* Modern Search Bar */}
-                    <div className="relative mb-12 flex justify-center">
-                        <input
-                            type="text"
-                            placeholder="Discover your favorites..."
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            className="w-full max-w-lg pl-12 pr-6 py-4 bg-white border border-stone-200 rounded-3xl shadow-sm focus:ring-2 focus:ring-stone-400 focus:outline-none transition-all duration-300"
-                        />
-                        <BiSearch className="absolute left-5 top-5 text-stone-400 text-xl" />
+                <div className="max-w-7xl mx-auto mt-20">
+                    
+                    {/* Modern Compact Search Bar */}
+                    <div className="mb-12 flex justify-center">
+                        <div className="relative w-full max-w-sm">
+                            <BiSearch className="absolute left-3 top-3.5 text-stone-400 text-lg" />
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-stone-200 rounded-full shadow-sm focus:ring-2 focus:ring-stone-400 focus:outline-none transition-all duration-300 text-sm"
+                            />
+                        </div>
                     </div>
 
-                    {/* Products Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {products.length > 0 ? (
-                            products.map((item) => (
-                                <ProductCard key={item.productID} product={item} />
-                            ))
-                        ) : (
-                            <p className="col-span-full text-center text-stone-500">No products found.</p>
-                        )}
-                    </div>
+                    {/* Categories Loop */}
+                    {categories.map((category) => {
+                        const filteredProducts = products.filter(
+                            (p) => p.category === category && p.name.toLowerCase().includes(query.toLowerCase())
+                        );
+
+                        if (filteredProducts.length === 0) return null;
+
+                        return (
+                            <div key={category} className="mb-16">
+                                <h2 className="text-2xl font-bold text-stone-900 mb-8 px-4 border-l-4 border-stone-900 ml-2">
+                                    {category}
+                                </h2>
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                    {filteredProducts.map((item) => (
+                                        <ProductCard key={item.productID} product={item} />
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>

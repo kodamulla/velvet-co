@@ -3,6 +3,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import AdminProductsPage from "./admin/AdminProductsPage";
 import AdminAddProductPage from "./admin/AdminAddProductPage";
 import AdminUpdateProductPage from "./admin/AdminUpdateProductPage";
+import AdminOrdersPage from "./admin/AdminOrdersPage";
 import { FaClipboardList, FaBox, FaUsers, FaStar } from "react-icons/fa";
 
 export default function AdminPage() {
@@ -24,7 +25,7 @@ export default function AdminPage() {
                 
                 {/* Sidebar Menu Links */}
                 <div className="w-full mt-10 px-6 text-text font-velvet flex flex-col gap-5 text-xl">
-                    <Link to="/admin" className="hover:text-primary transition-colors flex items-center gap-3">
+                    <Link to="/admin/orders" className="hover:text-primary transition-colors flex items-center gap-3">
                         <FaClipboardList /> Orders
                     </Link>
                     <Link to="/admin/products" className="hover:text-primary transition-colors flex items-center gap-3">
@@ -46,6 +47,7 @@ export default function AdminPage() {
                 <Routes>
                     <Route path="/" element={<h1 className="text-3xl font-bold">Orders </h1>} />
                     <Route path="/products" element={<AdminProductsPage />} />
+                    <Route path="/orders" element={<AdminOrdersPage />} />
                     <Route path="/add-product" element={<AdminAddProductPage />} />
                     <Route path="/update-product" element={<AdminUpdateProductPage />} />
                     <Route path="/users" element={<h1 className="text-3xl font-bold">Users</h1>} />
