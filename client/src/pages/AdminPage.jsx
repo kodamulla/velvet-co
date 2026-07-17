@@ -1,19 +1,30 @@
-
+import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import AdminProductsPage from "./admin/AdminProductsPage";
 import AdminAddProductPage from "./admin/AdminAddProductPage";
 import AdminUpdateProductPage from "./admin/AdminUpdateProductPage";
 import AdminOrdersPage from "./admin/AdminOrdersPage";
-import { FaClipboardList, FaBox, FaUsers, FaStar } from "react-icons/fa";
+import { FaClipboardList, FaBox, FaUsers, FaStar, FaBars } from "react-icons/fa";
 
 export default function AdminPage() {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [user, setUser] = useState(null);
+
     return (
-        <div className="w-full h-screen flex overflow-hidden bg-secondary p-4">
+        <div className="w-full h-screen flex overflow-hidden bg-secondary p-4 relative">
             
-            {/* Sidebar  */}
-            <div className="w-[300px] h-full flex-shrink-0 flex flex-col pt-4">
+            {/* Mobile Sidebar Toggle Button */}
+            <button 
+                className="md:hidden absolute top-6 left-6 z-50 text-text text-2xl" 
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+                <FaBars />
+            </button>
+            
+            {/* Sidebar */}
+            <div className={`fixed md:relative z-40 w-[300px] h-full flex-shrink-0 flex flex-col pt-4 bg-secondary transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 
-                {/* Logo  */}
+                {/* Logo */}
                 <div className="flex items-center gap-4 px-4">
                     <img 
                         src="/logo.png" 
@@ -24,7 +35,7 @@ export default function AdminPage() {
                 </div>
                 
                 {/* Sidebar Menu Links */}
-                <div className="w-full mt-10 px-6 text-text font-velvet flex flex-col gap-5 text-xl">
+                <div className="w-full mt-10 px-6 text-text font-velvet flex flex-col gap-5 text-xl" onClick={() => setIsSidebarOpen(false)}>
                     <Link to="/admin/orders" className="hover:text-primary transition-colors flex items-center gap-3">
                         <FaClipboardList /> Orders
                     </Link>
@@ -41,8 +52,8 @@ export default function AdminPage() {
                 
             </div>
 
-            {/* Content  */}
-            <div className="flex-1 bg-background h-full overflow-y-auto rounded-3xl border-[10px] border-solid border-secondary/20 shadow-sm p-10">
+            {/* Content */}
+            <div className="flex-1 bg-background h-full overflow-y-auto rounded-3xl border-[10px] border-solid border-secondary/20 shadow-sm p-4 md:p-10 ml-0 md:ml-4 transition-all">
                 
                 <Routes>
                     <Route path="/" element={<h1 className="text-3xl font-bold">Orders </h1>} />
