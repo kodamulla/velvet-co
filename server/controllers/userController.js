@@ -4,8 +4,6 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-
-
 export function createUser(req, res) {
     const data = req.body;
     const hashedPassword = bcrypt.hashSync(data.password, 10);
@@ -35,8 +33,6 @@ export function loginUser(req, res) {
             } else {
                 const user = users[0];
 
-              
-            
                 const isPasswordCorrect = bcrypt.compareSync(password, user.password);
                 
                 const playload = {
@@ -58,14 +54,31 @@ export function loginUser(req, res) {
                         role: user.role,
                      });
                 } else {
-                    res.json(401).json({ message: "Invalid password" });
-
-                    
+                    res.status(401).json({ message: "Invalid password" });
                 }
             }
         }
-
         )
+}
+
+// අලුතින් එකතු කළ getUser function එක
+export function getUser(req, res) {
+    const token = req.headers.authorization;
+
+    if (token == null) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+    }
+
+    const tokenData = token.replace("Bearer ", "");
+
+    jwt.verify(tokenData, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            res.status(403).json({ message: "Forbidden" });
+        } else {
+            res.json(decoded);
+        }
+    });
 }
 
 export function isAdmin(req){
@@ -79,4 +92,3 @@ export function isAdmin(req){
     }
     return true
 }
-  
