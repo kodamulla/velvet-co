@@ -3,7 +3,7 @@ import Header from './components/header';
 import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-
+import OrdersPage from './pages/OrdersPage';
 import AdminPage from './pages/AdminPage';
 import ProductPage from './pages/ProductPage';
 import ProductOverview from './pages/ProductOverview';
@@ -34,6 +34,7 @@ function App() {
           <Route path="/forget-password" element={<ForgetPasswordPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
+          <Route path="/orders" element={<><Header /><OrdersPage /></>} />
           
           
           <Route path="/*" element={<><Header /><HomePage /></>} />

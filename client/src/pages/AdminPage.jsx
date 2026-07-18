@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Routes, Route, Link } from "react-router-dom";
-import Loader from "../components/loader.jsx"; // Loader එක නිවැරදි Path එකෙන් Import කරන්න
+import Loader from "../components/loader.jsx"; 
 import AdminProductsPage from "./admin/AdminProductsPage";
 import AdminAddProductPage from "./admin/AdminAddProductPage";
 import AdminUpdateProductPage from "./admin/AdminUpdateProductPage";
 import AdminOrdersPage from "./admin/AdminOrdersPage";
+import AdminUsersPage from './admin/AdminUsersPage'; // නිවැරදි Path එකෙන් Import කළා
 import { FaClipboardList, FaBox, FaUsers, FaStar, FaBars } from "react-icons/fa";
 
 export default function AdminPage() {
@@ -15,29 +16,24 @@ export default function AdminPage() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         
-        // 1. Token එකක් නැත්නම් කෙලින්ම home එකට යවනවා
         if (!token) {
             window.location.href = "/";
             return;
         }
 
-        // 2. Token එකක් තියෙනවා නම් ඒක valid ද සහ user admin ද කියලා Backend එකෙන් බලනවා
         axios.get(import.meta.env.VITE_BACKEND_URL + "/users/", {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
         .then((response) => {
-            
             if (response.data.role === "admin") {
                 setUser(response.data);
             } else {
-                
                 window.location.href = "/";
             }
         })
         .catch((error) => {
-            
             localStorage.removeItem("token");
             window.location.href = "/";
         });
@@ -95,7 +91,7 @@ export default function AdminPage() {
                             <Route path="/orders" element={<AdminOrdersPage />} />
                             <Route path="/add-product" element={<AdminAddProductPage />} />
                             <Route path="/update-product" element={<AdminUpdateProductPage />} />
-                            <Route path="/users" element={<h1 className="text-3xl font-bold">Users</h1>} />
+                            <Route path="/users" element={<AdminUsersPage />} />
                             <Route path="/reviews" element={<h1 className="text-3xl font-bold">Reviews</h1>} />
                         </Routes>
                         
