@@ -8,6 +8,7 @@ import AdminPage from './pages/AdminPage';
 import ProductPage from './pages/ProductPage';
 import ProductOverview from './pages/ProductOverview';
 import RegisterPage from './pages/RegisterPage';
+import ForgetPasswordPage from './pages/ForgetPasswordPage';
 import CartPage from './pages/Cart';
 import CheckoutPage from './pages/Checkout';
 import { Toaster } from 'react-hot-toast';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/cart" element={<><Header /><CartPage /></>} />
           <Route path="/checkout" element={<><Header /><CheckoutPage /></>} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forget-password" element={<ForgetPasswordPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
           

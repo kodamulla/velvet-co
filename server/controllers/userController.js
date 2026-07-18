@@ -1,10 +1,23 @@
-import User from "../models/User.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import axios from "axios"; // Google Login එකට අවශ්‍ය නිසා අලුතින් එකතු කළා
+import User from '../models/User.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import axios from 'axios';
+import nodemailer from 'nodemailer';
+import Otp from '../models/Otp.js';
+
 
 dotenv.config();
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: 'hansikavithma@gmail.com',
+        pass: process.env.GMAIL_APP_PASSWORD
+    }
+})
 
 export function createUser(req, res) {
     const data = req.body;
@@ -12,94 +25,110 @@ export function createUser(req, res) {
 
     const user = new User({
         email: data.email,
+        password: hashedPassword,
         firstName: data.firstName,
         lastName: data.lastName,
-        password: hashedPassword,
-        role: data.role,
+        
     });
+
     user.save()
         .then(() => {
-            res.json({ message: "User created successfully" });
+            res.json({
+                message: "User created successfully"
+            });
         })
-        
+        .catch((err) => {
+            res.status(500).json({ error: err.message });
+        });
 }
 
 export function loginUser(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    User.find({ email: email })
-        .then((users) => {
-            if (users[0] == null) {
-                res.json({ message: "User not found" });
-            } else {
-                const user = users[0];
-
-                const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+    User.findOne({ email: email }).then( 
+        (user) => {
+            if (!user) {
+                return res.status(404).json({
+                    message: "User not found"
+                });
                 
-                const playload = {
+            }else{
+                
+                if(user.isBlocked){
+                    return res.status(403).json({
+                        message: "User is blocked"
+                    });
+                   
+                }
+            }
+
+            if (!user.password) {
+                return res.status(500).json({ message: "User password not set in database" });
+            }
+
+            const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+
+            if (isPasswordCorrect) {
+                const payload = {
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     role: user.role,
-                    isemailVerified: user.isemailVerified,
-                    image: user.image,
+                    isEmailverified: user.isEmailverified || false,
+                    image: user.image
                 };
 
-                const token = jwt.sign(playload, process.env.JWT_SECRET,{
-                    expiresIn: "150h"
-                })
-                
-                if (isPasswordCorrect) {
-                    res.json({ message: "Login successful",
-                        token: token,
-                        role: user.role,
-                     });
-                } else {
-                    res.status(401).json({ message: "Invalid password" });
+                if (!process.env.JWT_SECRET) {
+                    console.error("CRITICAL: JWT_SECRET is missing!");
+                    return res.status(500).json({ message: "Server configuration error" });
                 }
+
+                const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+                
+                res.json({
+                    message: "Login successful",
+                    token: token,
+                    role: user.role 
+                });
+            } else {
+                console.error("Invalid password attempt for user:", email);
+                res.status(401).json({
+                    message: "Invalid password"
+                });
             }
         }
-        )
-}
-
-// අලුතින් එකතු කළ getUser function එක
-export function getUser(req, res) {
-    const token = req.headers.authorization;
-
-    if (token == null) {
-        res.status(401).json({ message: "Unauthorized" });
-        return;
-    }
-
-    const tokenData = token.replace("Bearer ", "");
-
-    jwt.verify(tokenData, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            res.status(403).json({ message: "Forbidden" });
-        } else {
-            res.json(decoded);
-        }
+    ).catch(err => {
+        console.error("LOGIN ERROR:", err);
+        res.status(500).json({ message: "Internal Server Error" });
     });
 }
 
-export function isAdmin(req){
-    if(req.user == null){
-        
-        return false
+export function isAdmin(req) {
+    if (req.user == null) {
+        return false;
     }
-    if(req.user.role != "admin"){
-        
-        return false
+    if (req.user.role !== "admin") {
+        return false;
     }
-    return true
+    return true;
 }
 
-// ඔයා ලබා දුන් Google Login function එක (කිසිදු වෙනසක් කර නැත)
+export function getUser(req, res) {
+    if (req.user == null) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        })
+        
+    }
+    res.json(req.user);
+}
+
 export async function googleLogin(req, res) {
     console.log(req.body.token)
     try{
-        const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+        const response = await axios.get("https://www.googleapis.com/oauth2/v3/tokeninfo", {
             headers: {
                 Authorization: `Bearer ${req.body.token}`
             }
@@ -163,5 +192,139 @@ export async function googleLogin(req, res) {
         res.status(500).json({ 
             message: "Google login failed" ,
             error: error.message});
+    }
+}
+
+export async function validateOTPAndUpdatePassword( req, res) {
+    try{
+    const otp = req.body.otp;
+    const newPassword = req.body.newPassword;
+    const email = req.body.email;
+
+    const otpRecord = await Otp.findOne({ email: email, otp: otp });
+    if (otpRecord == null) {
+        return res.status(400).json({
+            message: "Invalid OTP"
+        });
+        return;
+    }
+    await Otp.deleteMany({ email: email });
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    await User.updateOne(
+        { email: email },
+        { $set: { password: hashedPassword , isEmailverified: true} }
+    );
+    res.json({
+        message: "Password updated successfully"
+    });
+    
+
+}catch(error){
+    return res.status(500).json({
+        message: "Error updating password",
+        error: error.message
+    });
+}
+}
+
+export async function sendOTP(req,res){
+    try{
+
+    const email = req.params.email;
+
+    const user = await User.findOne({
+        email: email
+    });
+    if(user == null){
+        return res.status(404).json({
+            message: "User not found"
+        });
+        return;
+    }
+    await Otp.deleteMany({
+        email: email
+    });
+
+    // Generate a 6-digit OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const newOtp = new Otp({
+        email: email,
+        otp: otpCode
+    });
+    await newOtp.save();
+
+    const message ={
+        from:"hansikavithma@gmail.com",
+        to: email,
+        subject: "Your OTP Code",
+        text: "Your OTP code is" + otpCode
+    }
+    transporter.sendMail(message, (err, info) => {
+        if(err){
+            res.status(500).json({
+                message: "Failed to send OTP",
+                error: err.message
+            });
+        }else{
+            res.json({
+                message: "OTP sent successfully"
+            });
+        }
+    });
+}catch(error){
+    res.status(500).json({
+        message: "Error sending OTP",
+        error: error.message
+    });
+}
+}
+
+export async function getAllUsers(req, res) {
+    if(!isAdmin(req)){
+        res.status(401).json({
+            message: "Unauthorized"
+        });
+        return;
+    }
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching users",
+            error: error.message
+        });
+    }
+}
+
+export async function updateUsersStatus(req, res) {
+    if(!isAdmin(req)){
+        res.status(401).json({
+            message: "Unauthorized"
+        });
+        return;
+    }
+    const email = req.params.email;
+    if(!req.user.email === email){
+        res.status(400).json({
+            message: "Admin cannot change their own status"
+        });
+        return;
+    }
+    const isBlocked = req.body.isBlocked;
+    try {
+        await User.updateOne(
+            { email: email },
+            { $set: {isBlocked: isBlocked} }
+        );
+        res.json({
+            message: "User status updated successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating user status",
+            error: error.message
+        });
     }
 }
