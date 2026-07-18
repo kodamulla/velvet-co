@@ -2,6 +2,8 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import axios from "axios"; // Google Login එකට අවශ්‍ය නිසා අලුතින් එකතු කළා
+
 dotenv.config();
 
 export function createUser(req, res) {
@@ -91,4 +93,75 @@ export function isAdmin(req){
         return false
     }
     return true
+}
+
+// ඔයා ලබා දුන් Google Login function එක (කිසිදු වෙනසක් කර නැත)
+export async function googleLogin(req, res) {
+    console.log(req.body.token)
+    try{
+        const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: {
+                Authorization: `Bearer ${req.body.token}`
+            }
+            });
+            console.log(response.data)
+
+            const user = await User.findOne({ email: response.data.email });
+            if(user == null){
+                const newUser = new User({
+                    email: response.data.email,
+                    firstName: response.data.given_name,
+                    lastName: response.data.family_name,
+                    password:"123",
+                    image: response.data.picture,
+                });
+                await newUser.save();
+
+                const payload = {
+                    email: newUser.email,
+                    firstName: newUser.firstName,
+                    lastName: newUser.lastName,
+                    role: newUser.role,
+                    isEmailverified: true,
+                    image: newUser.image
+                };
+                const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+                
+                res.json({
+                    message: "Login successful",
+                    token: token,
+                    role: newUser.role 
+                });
+                
+            }else{
+                if(user.isBlocked){
+                    return res.status(403).json({
+                        message: "User is blocked"
+                    });
+                }
+                const payload = {
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    role: user.role,
+                    isEmailverified: user.isEmailverified,
+                    image: user.image
+                };
+
+                const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+                
+                res.json({
+                    message: "Login successful",
+                    token: token,
+                    role: user.role 
+                });
+            }
+
+    }catch(error){
+        res.status(500).json({ 
+            message: "Google login failed" ,
+            error: error.message});
+    }
 }

@@ -28,16 +28,16 @@ export default function AdminPage() {
             }
         })
         .then((response) => {
-            // Role එක admin නම් විතරක් පේජ් එක පෙන්නන්න user ව set කරනවා
+            
             if (response.data.role === "admin") {
                 setUser(response.data);
             } else {
-                // Admin නෙවෙයි නම් home එකට යවනවා
+                
                 window.location.href = "/";
             }
         })
         .catch((error) => {
-            // Token එක invalid නම් හෝ error එකක් නම් logout කරලා home එකට යවනවා
+            
             localStorage.removeItem("token");
             window.location.href = "/";
         });

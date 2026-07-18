@@ -2,16 +2,54 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { GrGoogle } from "react-icons/gr";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const googlelogin = useGoogleLogin({
+        onSuccess: (response) => { 
+            setLoading(true);
+            axios.post(import.meta.env.VITE_BACKEND_URL + "/users/google", {
+                token: response.access_token
+            })
+            .then((res) => {
+                localStorage.setItem("token", res.data.token);
+                if(res.data.role === "admin"){
+                    navigate("/admin");
+                }else{
+                    navigate("/");
+                }
+                toast.success("Login successful!");
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                
+            });
+            setIsLoading(false);
+         },
+        onError: (error) => { toast.error("Google login failed. Please try again.");  },
+        onNonOAuthError: (error) => { toast.error("Google login failed. Please try again.");  },
+       
+
+            
+            
+        
+    })
 
     async function login(){
        console.log("Login button clicked");
        console.log("Email:", email);
        console.log("Password:", password);
+
+       
+       if (!email || !password) {
+           toast.error("Please enter both email and password.");
+           return; 
+       }
 
        try {
               const res = await axios.post(import.meta.env.VITE_BACKEND_URL +"/users/login", {
@@ -87,8 +125,12 @@ export default function LoginPage() {
                         </div>
                         
                         {/* Modern Button */}
-                        <button onClick={login} className="w-full py-3.5 sm:py-4 bg-text text-background rounded-2xl hover:bg-[#1a100e] hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-extrabold tracking-[0.2em] text-sm uppercase">
+                        <button onClick={login} className="w-full mb-[20px] py-3.5 sm:py-4 bg-text text-background rounded-2xl hover:bg-[#1a100e] hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-extrabold tracking-[0.2em] text-sm uppercase">
                            Sign In
+                        </button>
+
+                        <button onClick={googlelogin} className="w-full py-3.5 sm:py-4 bg-text text-background rounded-2xl hover:bg-[#1a100e] hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-extrabold tracking-[0.2em] text-sm uppercase">
+                           Sign In with <GrGoogle className="inline-block ml-2" />
                         </button>
 
                         {/* Register Link */}
@@ -101,7 +143,7 @@ export default function LoginPage() {
                 
             </div>
 
-            {/* දකුණු පැත්ත (Image) - ෆෝන් එකේදී සඟවලා ලොකු තිර වලදී පෙන්වයි */}
+            {/* (Image)  */}
             <div className="hidden lg:flex w-[50%] h-screen p-10 xl:p-20 justify-center items-center">
                 <img 
                     src="/login.png" 
