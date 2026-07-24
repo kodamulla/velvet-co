@@ -8,7 +8,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 w-full z-50 px-4 md:px-8 py-3 md:py-5 flex items-center justify-between bg-background/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none transition-all">
+    <header className="fixed top-0 w-full z-50 px-4 md:px-8 py-3 md:py-0 flex items-center justify-between bg-background border-b border-secondary/20 transition-all">
       
       {/* 1. Logo */}
       <div className="flex-shrink-0">

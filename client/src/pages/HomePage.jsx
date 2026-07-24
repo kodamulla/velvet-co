@@ -21,11 +21,11 @@ export default function HomePage() {
     ];
 
     return (
-        <div className="w-full min-h-screen bg-background text-text selection:bg-accent selection:text-background font-sans overflow-hidden">
+        <div className="w-full min-h-screen  text-text selection:bg-accent selection:text-background font-sans overflow-hidden">
             
             {/* 1. HERO SECTION */}
             {/* මෙතනින් overflow-hidden ඉවත් කර ඇත */}
-            <section ref={heroRef} className="relative w-full h-[100vh] lg:h-[95vh] flex flex-col md:flex-row items-center pt-24 px-6 md:px-16 lg:px-24 bg-gradient-to-r from-background to-secondary/30">
+            <section ref={heroRef} className="relative w-full h-[100vh]  bg-accent flex flex-col md:flex-row items-center pt-24 px-6 md:px-16 lg:px-24 bg-gradient-to-r from-background to-secondary/30">
                 
                 {/* Left Text Content - Fade out effect added */}
                 <motion.div style={{ y: textY, opacity: heroOpacity }} className="z-20 w-full md:w-[50%] flex flex-col items-start mt-10 md:mt-0">
@@ -132,7 +132,7 @@ export default function HomePage() {
             </section>
 
             {/* 3. PROMO BANNER SECTION (Slimmer Height, Full Width) */}
-            <section className="w-full py-12 px-6 md:px-16 lg:px-24 bg-background">
+            <section className="w-full py-12 px-6 md:px-16 lg:px-24 bg-accent/30">
                 <motion.div 
                     initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
                     className="relative w-full rounded-[2.5rem] overflow-hidden min-h-[350px] flex items-center p-6 md:p-10 lg:p-12 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)]"
@@ -173,7 +173,7 @@ export default function HomePage() {
             </section>
 
             {/* 4. BRAND PHILOSOPHY / THE VELVET STANDARD */}
-            <section className="w-full py-32 px-6 md:px-16 lg:px-24 bg-secondary/20">
+            <section className="w-full py-32 px-6 md:px-16 lg:px-24  bg-secondary/20">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-20">
                         <motion.span 

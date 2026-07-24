@@ -4,6 +4,8 @@ import Footer from './components/Footer';
 import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import OrdersPage from './pages/OrdersPage';
 import AdminPage from './pages/AdminPage';
 import ProductPage from './pages/ProductPage';
@@ -29,6 +31,8 @@ function App() {
         <Routes>
           
           <Route path="/" element={<><Header /><HomePage /></>} />
+          <Route path="/about" element={<><Header /><AboutPage /></>} />
+          <Route path="/contact" element={<><Header /><ContactPage /></>} />
           <Route path="/products" element={<><Header /><ProductPage /></>} />
           <Route path="/overview/:productID" element={<><Header /><ProductOverview /></>} />
           <Route path="/cart" element={<><Header /><CartPage /></>} />
