@@ -61,7 +61,7 @@ export default function ProductPage() {
                                     {category}
                                 </h2>
                                 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                <div className="w-full flex overflow-x-auto snap-x snap-mandatory gap-5 pb-8 pt-4 px-4 scrollbar-hide">
                                     {filteredProducts.map((item) => (
                                         <ProductCard key={item.productID} product={item} />
                                     ))}
