@@ -6,13 +6,13 @@ const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 const supabase = createClient(url, key);
 
 export async function uploadFile(file) {
-    // Promise එකක් ලෙස හෝ async/await ලෙස ලියාගත හැක
+    
     const timeStamp = Date.now();
     const fileName = timeStamp + "-" + file.name;
 
     try {
-        // 1. ගොනුව Upload කිරීම
-        const { data, error } = await supabase.storage
+        // 1.  Upload 
+        const { data, error } = await supabase.storage 
             .from("images")
             .upload(fileName, file, {
                 cacheControl: '3600',
@@ -21,10 +21,10 @@ export async function uploadFile(file) {
 
         if (error) throw error;
 
-        // 2. Upload කළ නිවැරදි fileName එක භාවිතා කර Public URL එක ලබා ගැනීම
+        // 2. Upload කළ නිවැරදි fileName එක භාවිතා කර Public URL එක ලබා ගැනීම.
         const { data: urlData } = supabase.storage
             .from("images")
-            .getPublicUrl(fileName); // මෙතන file.name වෙනුවට fileName භාවිතා කළ යුතුයි
+            .getPublicUrl(fileName); // මෙතන file.name වෙනුවට fileName භාවිතා කළ යුතුයි. 
 
         console.log("Public URL:", urlData.publicUrl);
         return urlData.publicUrl; // URL එක return කිරීම අනිවාර්යයි

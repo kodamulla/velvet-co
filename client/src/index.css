@@ -1,41 +1,55 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Montserrat';
-  src: url('./fonts/Montserrat-ExtraBold.ttf') format('truetype');
-  font-weight: 800; 
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme {
-  --color-text: #3E2723;
-  --color-background: #FAF5F0;
-  --color-primary: #8D7B68;
-  --color-secondary: #E6DED6;
-  --color-accent: #C8937E;
+  /* Deep Obsidian - තද දුඹුරු වෙනුවට ඉතා තියුණු, Modern කළු පැහැයක් */
+  --color-text: #1C1917; 
+  /* Alabaster Pearl - ඉතා පිරිසිදු, මිල අධික පෙනුමක් දෙන ක්‍රීම් සුදු */
+  --color-background: #FDFCF8; 
+  /* Dusty Taupe - High-end Skincare පෙනුම දෙන අළු/දුඹුරු මුසු වර්ණය */
+  --color-primary: #A39184; 
+  /* Soft Sand - Cards සහ Sections වල පසුබිමට */
+  --color-secondary: #F0EBE1; 
+  /* Muted Blush - Cosmetic බ්‍රෑන්ඩ් එකකට ගැළපෙන මෘදු රෝස/පීච් වර්ණය */
+  --color-accent: #D1A79B; 
 
-  --font-velvet: 'Montserrat', sans-serif;
+  --font-velvet: 'Cormorant Garamond', serif;
+  --font-sans: 'Inter', sans-serif;
 }
 
+/* 
+   Lenis Smooth Scrolling සදහා අවශ්‍ය මූලික CSS 
+*/
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
 
+/* Premium Minimalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
-
-
 ::-webkit-scrollbar-track {
-  background: #FAF5F0; 
+  background: transparent; 
 }
-
-
 ::-webkit-scrollbar-thumb {
-  background: #E6DED6; 
+  background: var(--color-accent); 
   border-radius: 10px; 
-  border: 2px solid #FAF5F0; 
 }
-
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #8D7B68; 
+  background: var(--color-primary); 
 }

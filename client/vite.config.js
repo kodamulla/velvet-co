@@ -13,6 +13,9 @@ export default defineConfig({
   },
   // මේ කොටස අලුතින් එකතු කළා
   server: {
+    watch: {
+      usePolling: true, 
+    },
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin-allow-popups"
     }

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from './components/header';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -13,12 +14,14 @@ import CartPage from './pages/Cart';
 import CheckoutPage from './pages/Checkout';
 import { Toaster } from 'react-hot-toast';
  import { GoogleOAuthProvider } from "@react-oauth/google";
+ import { ReactLenis } from '@studio-freight/react-lenis';
 
 // 310342769413-knfmiorsv77d38to0tjf0j7sj21utujs.apps.googleusercontent.com
 
 
 function App() {
   return (
+    <ReactLenis root options={{ lerp: 0.08, duration: 1.5, smoothTouch: true }}>
      <GoogleOAuthProvider clientId="310342769413-knfmiorsv77d38to0tjf0j7sj21utujs.apps.googleusercontent.com">
     <BrowserRouter>
       <Toaster position="top-right"/>
@@ -40,8 +43,10 @@ function App() {
           <Route path="/*" element={<><Header /><HomePage /></>} />
         </Routes>
       </div>
+      <Footer />
     </BrowserRouter>
      </GoogleOAuthProvider>
+     </ReactLenis>
   )
 }
 
